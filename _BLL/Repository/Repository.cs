@@ -19,26 +19,35 @@ namespace _BLL.Repository
             DbSet = _db.Set<T>();
 
         }
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
             throw new NotImplementedException();
         }
 
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             throw new NotImplementedException();
         }
 
-        public T FindById(int Id)
+        public async Task<T> FindById(int Id)
         {
+            try
+            {
+                var obj = DbSet.FirstOrDefault(x => x.Id == Id);                
+                return obj;               
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<T> FindByName(string Name) { 
             throw new NotImplementedException();
         }
 
-        public T FindByName(string Name) { 
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<T> FindForParam(QueryParam<T> queryParam)
+        public async Task<IEnumerable<T>> FindForParam(QueryParam<T> queryParam)
         {
             throw new NotImplementedException();
         }
@@ -57,7 +66,7 @@ namespace _BLL.Repository
             }
         }
 
-        public void Update(T entity)
+        public Task Update(T entity)
         {
             throw new NotImplementedException();
         }

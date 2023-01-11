@@ -1,5 +1,6 @@
 using _BLL.UnitOfWork;
 using BetterPlanChallenge.Model;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 
 
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ChallengeContext>();
-builder.Services.AddDbContext<ChallengeContext>();
+builder.Services.AddTransient<DbContext, ChallengeContext>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 var app = builder.Build();
 

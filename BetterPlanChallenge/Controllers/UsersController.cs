@@ -1,4 +1,7 @@
-﻿using _BLL.UnitOfWork;
+﻿using _BLL;
+using _BLL.QueryResolver;
+using _BLL.UnitOfWork;
+using _DAL;
 using BetterPlanChallenge.DTOs;
 using BetterPlanChallenge.Model;
 using Microsoft.AspNetCore.Http;
@@ -11,9 +14,11 @@ namespace BetterPlanChallenge.Controllers
     public class UsersController : ControllerBase
     {
         private IUnitOfWork _UnitOfWork;
-        public UsersController(IUnitOfWork UnitOfWork)
+        private IQueryResolver _queryResolver; 
+        public UsersController(IUnitOfWork UnitOfWork, IQueryResolver queryResolver)
         {
             _UnitOfWork= UnitOfWork;
+            _queryResolver= queryResolver;
         }
 
         #region public methods
@@ -65,6 +70,29 @@ namespace BetterPlanChallenge.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpGet("{id}/summary")]
+        public async Task<ActionResult<SummaryDTO>> GetSummaryForUser(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest("The paramater User Id is required for execute the summary operation");
+            }
+            try
+            {
+                var param = new Dictionary<string, string>();
+                param.Add("UserId", id.ToString());
+                var Summarydb = await _queryResolver.Execute<Summary>(param);
+                return Ok((SummaryDTO)Summarydb.FirstOrDefault());
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }           
+
+        }
+
+        
         #endregion
     }
 }

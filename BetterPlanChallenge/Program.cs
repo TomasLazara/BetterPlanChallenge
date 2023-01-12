@@ -1,3 +1,4 @@
+using _BLL.QueryResolver;
 using _BLL.UnitOfWork;
 using BetterPlanChallenge.Model;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 builder.Services.AddEntityFrameworkNpgsql().AddDbContext<ChallengeContext>();
 builder.Services.AddTransient<DbContext, ChallengeContext>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IQueryResolver, QueryResolver>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

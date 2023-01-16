@@ -10,10 +10,7 @@ namespace _BLL.Repository
 {
     public interface IRepository<T> 
     {
-        Task<IEnumerable<T>> GetAll();
-        Task Add(T entity);
-        Task Delete(T entity);
-        Task Update(T entity);
+        Task<IEnumerable<T>> GetAll();       
         Task<T> FindById(int Id);
         Task<IEnumerable<T>> FindForParam(QueryParam<T> queryParam);
     }

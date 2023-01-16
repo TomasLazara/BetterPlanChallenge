@@ -1,5 +1,6 @@
 ﻿using _BLL.UnitOfWork;
 using _DAL;
+using BetterPlanChallenge.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,8 @@ namespace _BLL.QueryResolver
             _unitOfWork = unitOfWork;
             _query = new Dictionary<string, IQueryResolver>
             {
-                {typeof(Summary).Name, new SummaryQuery(unitOfWork)}
+                {typeof(Summary).Name, new SummaryQuery(unitOfWork)},
+                {typeof(GoalDetails).Name, new GoalQuery(unitOfWork) }
             };
         }
         public async Task<IEnumerable<T>> Execute<T>(Dictionary<string, string> Stringparams)

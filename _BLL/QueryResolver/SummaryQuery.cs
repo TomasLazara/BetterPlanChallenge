@@ -65,7 +65,7 @@ namespace _BLL.QueryResolver
         {
             var query = @"
                 select 
-                    Sum(gtf.amount) as contributions                
+                    Sum(gt.amount) as contributions                
               ";
             query += baseQuery;
             query = query.Replace("@id", id);

@@ -13,6 +13,8 @@ namespace _BLL.UnitOfWork
 
     {
         private IRepository<User> _users;
+        private IRepository<Goal> _goals;
+
         private IDBORepository _dbo;
         private DbContext _ctx;
         public UnitOfWork(DbContext ctx)
@@ -27,6 +29,17 @@ namespace _BLL.UnitOfWork
                        _users;
             }            
         }
+
+        public IRepository<Goal> Goals
+        {
+            get
+            {
+                return _goals == null ?
+                       _goals = new Repository<Goal>(_ctx) :
+                       _goals;
+            }
+        }
+
         public IDBORepository Dbo { 
             get {
                 return _dbo == null ?

@@ -6,6 +6,7 @@ using BetterPlanChallenge.DTOs;
 using BetterPlanChallenge.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace BetterPlanChallenge.Controllers
 {
@@ -14,11 +15,11 @@ namespace BetterPlanChallenge.Controllers
     public class UsersController : ControllerBase
     {
         private IUnitOfWork _UnitOfWork;
-        private IQueryResolver _queryResolver; 
+        private IQueryResolver _queryResolver;
         public UsersController(IUnitOfWork UnitOfWork, IQueryResolver queryResolver)
         {
-            _UnitOfWork= UnitOfWork;
-            _queryResolver= queryResolver;
+            _UnitOfWork = UnitOfWork;
+            _queryResolver = queryResolver;
         }
 
         #region public methods
@@ -56,11 +57,11 @@ namespace BetterPlanChallenge.Controllers
             try
             {
                 var usersDB = await _UnitOfWork.Users.FindById(id);
-                if(usersDB == null)
+                if (usersDB == null)
                 {
                     return NoContent();
                 }
-                var usersDto = (UserDTO)usersDB;                               
+                var usersDto = (UserDTO)usersDB;
                 return Ok(usersDto);
 
             }
@@ -88,11 +89,61 @@ namespace BetterPlanChallenge.Controllers
             catch (Exception ex)
             {
                 return NotFound(ex.Message);
-            }           
+            }
 
         }
 
-        
+        [HttpGet("{id}/goals")]
+        public async Task<ActionResult<GoalsDTO>> GetGoalsForId(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest("The paramater User Id is required for execute the summary operation");
+            }
+            try
+            {
+                var queryParam = new QueryParam<Goal>();
+                queryParam.Where = x => x.Userid == id;
+                var lst = await _UnitOfWork.Goals.FindForParam(queryParam);
+                var dtos = lst.Select(x =>
+                {
+                    var y = new GoalsDTO();
+                    y = x;
+                    return y;
+                });
+                return Ok(dtos);
+            }
+            catch (Exception ex)
+            {
+
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}/goals/{goalId}")]
+        public async Task<ActionResult<GoalDetailsDTO>> GetGoalsDetailsForId(int? id, int? goalId)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest("The paramater User Id is required for execute the summary operation");
+            }
+            if (!goalId.HasValue)
+            {
+                return BadRequest("The paramater User Id is required for execute the summary operation");
+            }
+            var param = new Dictionary<string, string>();
+            param.Add("GoalId", goalId.ToString());
+            param.Add("UserId", id.ToString());
+
+            var Goalsdb = await _queryResolver.Execute<GoalDetails>(param);
+            var dtos = Goalsdb.Select(x =>
+            {
+                var y = new GoalDetailsDTO();
+                y = x;
+                return y;
+            });
+            return Ok(dtos);
+        }
         #endregion
     }
 }

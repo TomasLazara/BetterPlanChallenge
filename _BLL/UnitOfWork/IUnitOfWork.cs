@@ -11,6 +11,7 @@ namespace _BLL.UnitOfWork
     public interface IUnitOfWork
     {
         IRepository<User> Users { get; }
+        IRepository<Goal> Goals { get; }
         IDBORepository Dbo { get; }
         Task Save();
     }

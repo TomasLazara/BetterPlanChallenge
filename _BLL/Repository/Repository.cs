@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,26 +16,17 @@ namespace _BLL.Repository
         private DbSet<T> DbSet;
         public Repository(DbContext ctx)
         {
-            _db= ctx;
+            _db = ctx;
             DbSet = _db.Set<T>();
 
         }
-        public async Task Add(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Delete(T entity)
-        {
-            throw new NotImplementedException();
-        }
-
+     
         public async Task<T> FindById(int Id)
         {
             try
             {
-                var obj = DbSet.FirstOrDefault(x => x.Id == Id);                
-                return obj;               
+                var obj = DbSet.FirstOrDefault(x => x.Id == Id);
+                return obj;
             }
             catch (Exception ex)
             {
@@ -43,32 +35,52 @@ namespace _BLL.Repository
             }
         }
 
-        public async Task<T> FindByName(string Name) { 
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<T>> FindForParam(QueryParam<T> queryParam)
         {
-            throw new NotImplementedException();
-        }
+            var orderByClass = GetOrderBy(queryParam);
+            Expression<Func<T, bool>> whereTrue = x => true;
+            var where = (queryParam.Where == null) ? whereTrue : queryParam.Where;
 
+            if (orderByClass.IsAscending)
+            {
+                return DbSet.Where(where).OrderBy(orderByClass.OrderBy)
+                    .Skip((queryParam.Paginate - 1) * queryParam.Top)
+                    .Take(queryParam.Top).ToList();
+            }
+            else
+            {
+                return DbSet.Where(where).Where(where).OrderByDescending(orderByClass.OrderBy)
+                    .Skip((queryParam.Paginate - 1) * queryParam.Top)
+                    .Take(queryParam.Top).ToList();
+            }
+        }
         public async Task<IEnumerable<T>> GetAll()
         {
             try
             {
-              var lst =  await DbSet.ToListAsync<T>();
-              return lst;
+                var lst = await DbSet.ToListAsync<T>();
+                return lst;
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
 
                 throw new Exception(ex.Message);
             }
         }
 
-        public Task Update(T entity)
+
+        private Order<T> GetOrderBy(QueryParam<T> queryParam)
         {
-            throw new NotImplementedException();
+            if (queryParam.OrderBy == null && queryParam.OrderByDescending == null)
+            {
+                return new Order<T>(x => x.Id, true);
+            }
+
+            return (queryParam.OrderBy != null)
+                ? new Order<T>(queryParam.OrderBy, true) :
+                new Order<T>(queryParam.OrderByDescending, false);
+
         }
     }
+
 }

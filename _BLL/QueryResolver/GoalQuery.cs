@@ -13,6 +13,10 @@ namespace _BLL.QueryResolver
     {
         private readonly IUnitOfWork _unitOfWork;
         private string _queryBase;
+        //LEER: La resolucion aqui planteada me parece ineficiente, lo que hubiera hecho y que es intuitivo
+        //es mapear el query al tipo SUMMARY o GOALDETAIL.Pero no pude sortear la excepcion lanzada para ello.
+        //probe el mismo codigo en SQL SERVER y me funciono, otra forma pudiera haber sido crear en la base de datos
+        //una vista o un SP. Frente la imposibilidad segmente de la siguiente manera.
         public GoalQuery(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -73,7 +77,6 @@ namespace _BLL.QueryResolver
         {
             return await _unitOfWork.Goals.FindById(Convert.ToInt32(id));
         }
-
         private async Task<double> GetWithdrawal(string id, string UserId) {
             var query = @"  select distinct     ";
             query += "sum(gtsale.amount)as withdrawal    ";

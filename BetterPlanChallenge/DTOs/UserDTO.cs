@@ -9,6 +9,7 @@ namespace BetterPlanChallenge.DTOs
         public string AdvisorName { get; set; }
         public DateTime? CreationDate { get; set; }
 
+        //Se utiliza un IMPLICIT OPERATOR para mapear entidades
         public static implicit operator UserDTO(User _db) 
         {
             var db = _db;

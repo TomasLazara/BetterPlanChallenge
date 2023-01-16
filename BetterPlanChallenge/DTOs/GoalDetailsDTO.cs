@@ -16,7 +16,7 @@ namespace BetterPlanChallenge.DTOs
             dto.Years = db.Years;
             dto.Initialinvestment = db.Initialinvestment;
             dto.Created = db.Created;
-            dto.percentageComplete = db.TargetAmount;
+            dto.percentageComplete = db.percentageComplete;
             dto.TargetAmount = db.TargetAmount; 
             dto.Title = db.Title;
             return dto;        

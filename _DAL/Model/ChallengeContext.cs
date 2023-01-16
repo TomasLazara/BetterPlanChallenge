@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using _DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Options;
 
 namespace BetterPlanChallenge.Model;
@@ -54,7 +56,7 @@ public partial class ChallengeContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -64,10 +66,14 @@ public partial class ChallengeContext : DbContext
         }
 
     }
-        
+
     //host=104.197.55.31;Database=challenge;Port=5432;Username=challengeuser;Password=challengepass
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDbFunction(typeof(ChallengeContext).GetMethod(nameof(GetBalance)))
+            .HasName("GetBalance");
+        modelBuilder.Entity<Summary>().HasNoKey();
+
         modelBuilder.Entity<Compositioncategory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("compositioncategory_pkey");
@@ -86,6 +92,7 @@ public partial class ChallengeContext : DbContext
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Uuid).HasColumnName("uuid");
         });
+
 
         modelBuilder.Entity<Compositionsubcategory>(entity =>
         {
@@ -737,4 +744,6 @@ public partial class ChallengeContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public int GetBalance() => throw new NotImplementedException();    
 }

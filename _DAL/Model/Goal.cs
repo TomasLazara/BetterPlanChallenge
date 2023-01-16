@@ -1,9 +1,10 @@
-﻿using System;
+﻿using _DAL;
+using System;
 using System.Collections.Generic;
 
 namespace BetterPlanChallenge.Model;
 
-public partial class Goal
+public partial class Goal : EntityMaster
 {
     public string Title { get; set; } = null!;
 

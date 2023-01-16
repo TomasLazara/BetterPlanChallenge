@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BetterPlanChallenge.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,13 +17,12 @@ namespace _BLL.Repository
         {
             _db = db;
         }
-        public async Task<IEnumerable<Tout>> ResolveQuery<Tout>(string query)
+        public async Task<IEnumerable<Tout>> ResolveQuery<Tout>(string query) 
         {
             try
             {
-                var databaseList = _db.Database.SqlQueryRaw<Tout>(query);
-                var lst = databaseList.ToListAsync();
-                return await lst;
+                var databaseResult = _db.Database.SqlQueryRaw<Tout>(query);                               
+                return databaseResult;
             }
             catch (Exception ex)
             {

@@ -14,6 +14,10 @@ namespace BetterPlanChallenge.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        //Se utiliza inyeccion de dependencias para los repositorios a travez de UNIT OF WORK para nuclear 
+        //las entidades y sus repositorios a utilizar y no tener que instanciarlo muchas veces
+        //tambien se inyecta queryresolver, que es un diseño Command para las querys customizadas donde se hacen
+        //joins
         private IUnitOfWork _UnitOfWork;
         private IQueryResolver _queryResolver;
         public UsersController(IUnitOfWork UnitOfWork, IQueryResolver queryResolver)
@@ -34,6 +38,8 @@ namespace BetterPlanChallenge.Controllers
                 {
                     return NoContent();
                 }
+                //Se utilizo un implicit operator en la entidad DTO para hacer mas agil  y legible el mapeo
+                //desacoplandolo del controlador
                 var usersDto = usersDB.Select(x =>
                 {
                     var y = new UserDTO();
@@ -61,6 +67,8 @@ namespace BetterPlanChallenge.Controllers
                 {
                     return NoContent();
                 }
+                //Se utilizo un implicit operator en la entidad DTO para hacer mas agil  y legible el mapeo
+                //desacoplandolo del controlador 
                 var usersDto = (UserDTO)usersDB;
                 return Ok(usersDto);
 
@@ -81,9 +89,12 @@ namespace BetterPlanChallenge.Controllers
             }
             try
             {
+                //Se añade un diccionario de parametros, para poder trabajar N cantidad de parametros y 
+                //resolverlo segun la entidad correspondiente a trabajar en el QUERY RESOLVER
                 var param = new Dictionary<string, string>();
                 param.Add("UserId", id.ToString());
                 var Summarydb = await _queryResolver.Execute<Summary>(param);
+                //Se castea utilizando implicit operator
                 return Ok((SummaryDTO)Summarydb.FirstOrDefault());
             }
             catch (Exception ex)
@@ -104,6 +115,8 @@ namespace BetterPlanChallenge.Controllers
             {
                 var queryParam = new QueryParam<Goal>();
                 queryParam.Where = x => x.Userid == id;
+                //aqui ya que la busqueda se daba por las caracteristicas propias de la entidad y no
+                //por una combinacion de tablas se utiliza una parametrizacion a nivel EXPRESSION LINQ
                 var lst = await _UnitOfWork.Goals.FindForParam(queryParam);
                 var dtos = lst.Select(x =>
                 {

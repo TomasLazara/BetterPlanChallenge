@@ -12,9 +12,14 @@ namespace _BLL.QueryResolver
     {
         private readonly IUnitOfWork _unitOfWork;
         private string baseQuery; 
+        //LEER: La resolucion aqui planteada me parece ineficiente, lo que hubiera hecho y que es intuitivo
+        //es mapear el query al tipo SUMMARY o GOALDETAIL.Pero no pude sortear la excepcion lanzada para ello.
+        //probe el mismo codigo en SQL SERVER y me funciono, otra forma pudiera haber sido crear en la base de datos
+        //una vista o un SP. Frente la imposibilidad segmente de la siguiente manera.
         public SummaryQuery(IUnitOfWork unitOfWork)
         {
               _unitOfWork= unitOfWork;
+                //aqui la base del query con sus joins
                baseQuery = @"                
                 from goaltransactionfunding gtf 
                  inner join fundingsharevalue fsv 
@@ -54,9 +59,12 @@ namespace _BLL.QueryResolver
             var query = @"select 
                 Sum((gtf.quotas * fsv.value * cig.value)) as balance               
              ";
-            query += baseQuery;                 
+            query += baseQuery;
+
+            //Se reemplazan los parametros.
             query = query.Replace("@id", id);
 
+            //enviamos a la instancia de base de datos el query a resolver.
             var dbEntity =  await _unitOfWork.Dbo.ResolveQuery<double?>(query);
             var result = !dbEntity.FirstOrDefault().HasValue ? 0.0 : dbEntity.FirstOrDefault();
             return (double)result;
@@ -68,7 +76,11 @@ namespace _BLL.QueryResolver
                     Sum(gt.amount) as contributions                
               ";
             query += baseQuery;
+            //Se reemplazan los parametros.
+
             query = query.Replace("@id", id);
+            //enviamos a la instancia de base de datos el query a resolver.
+
             var dbEntity = await _unitOfWork.Dbo.ResolveQuery<double?>(query);
             var result = !dbEntity.FirstOrDefault().HasValue ? 0.0 : dbEntity.FirstOrDefault();
             return (double)result;

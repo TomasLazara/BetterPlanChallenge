@@ -17,3 +17,6 @@ Este proyecto es una aplicación web construida en .NET 6 utilizando Entity Fram
 1. Descargue el código fuente del proyecto desde GitHub.
 2. Abra el proyecto en su entorno de desarrollo preferido (Visual Studio, por ejemplo).
 3.Ejecute en modo Debug.
+
+## Acceso web
+1. Se puede acceder a las funcionlidades a travez de: http://betterplanchallenge.somee.com/swagger/index.html
